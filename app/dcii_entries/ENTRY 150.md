@@ -31,9 +31,9 @@ The subject will still cause feelings of dread even if the individual does not k
 
 Naturally, the Department has investigated potential causes. Subject 1 is not enchanted or cursed, nor is it <confidential>psychically imbued</confidential>, nor does it harbor any technology on the interior besides a broken microchip. The individual pieces of Subject 1 still cause these sensations at no loss of severity or strength. 
 
-It was received in the mail at DCII's Dallas site, from an anonymous sender. The letter only contained a small note with a scrawled message (see FOOTNOTE 150-1) and a badly damaged SD card.
+It was received in the mail at DCII's Dallas site, from an anonymous sender. The letter only contained a small note with a scrawled message (see **FOOTNOTE 150-1**) and a badly damaged SD card.
 
-Currently, Subject 1 resides in a small foam-lined plastic container in the center of a mostly empty room in the basement of the Dallas site. A sign on the door is posted as a warning to those heading inside. FOOTNOTE 150-2 contains the full text.
+Currently, Subject 1 resides in a small foam-lined plastic container in the center of a mostly empty room in the basement of the Dallas site. A sign on the door is posted as a warning to those heading inside. **FOOTNOTE 150-2** contains the full text.
 
 # FOOTNOTE 150-1
 A translation of the text of the note, written hastily in black ink on a torn quarter of FIVESTAR lined paper (typos are intentional):
