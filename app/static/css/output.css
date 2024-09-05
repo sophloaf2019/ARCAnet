@@ -1124,10 +1124,6 @@ video {
   display: table;
 }
 
-.hidden {
-  display: none;
-}
-
 .max-w-screen-xl {
   max-width: 1280px;
 }
@@ -1157,6 +1153,10 @@ video {
 
 .font-extrabold {
   font-weight: 800;
+}
+
+.italic {
+  font-style: italic;
 }
 
 .text-amber-500 {

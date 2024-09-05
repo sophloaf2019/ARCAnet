@@ -10,12 +10,12 @@ import markdown
 import re
 
 clearance_order = {
-    'Declassified': 0,
-    'Sensitive': 1,
-    'Confidential': 2,
-    'Classified': 3,
-    'Secret': 4,
-    'Top Secret': 5,
+    'declassified': 0,
+    'sensitive': 1,
+    'confidential': 2,
+    'classified': 3,
+    'secret': 4,
+    'top secret': 5,
 }
 
 class Entry:
@@ -30,18 +30,15 @@ def replace_tags_with_black_box(text, clearance):
     black_box = '█'
 
     # Regular expression pattern to match <clearance: Value></clearance> tags
-    pattern = r'<(clearance):([^>]*)>([^<]*)</\1>'
+    pattern = r'<([^>]*)>([^<]*)</\1>'
 
     # Function to replace the content of the tags with black boxes and remove the tags
     def replace_match(match):
         # Extract the tag type and content
-        tag_type = match.group(1).strip()  # e.g., "clearance"
-        value = match.group(2).strip()    # e.g., "Value"
-        content = match.group(3).strip()  # e.g., "Content"
-        print(clearance)
-        print(value)
+        value = match.group(1).strip()  # e.g., "clearance"
+        content = match.group(2).strip()  # e.g., "Content"
         # Replace all non-space characters in the content with the black box character
-        replaced_content = re.sub(r'\S', black_box, content) if clearance_order[value] >= clearance_order[clearance] else content
+        replaced_content = re.sub(r'[^.,!?\'"(){}\[\]:;\\/\-\s]', black_box, content) if clearance_order[value] >= clearance_order[clearance.lower()] else content
         
         # Construct the new tag with replaced content
         return replaced_content

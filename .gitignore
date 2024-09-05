@@ -1,2 +1,4 @@
 
 config.py
+/node_modules
+/venv
