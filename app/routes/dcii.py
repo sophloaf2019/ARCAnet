@@ -26,8 +26,7 @@ class Entry:
         self.id = id
 
 def replace_tags_with_black_box(text, clearance):
-    # Define the ASCII black box character
-    black_box = '█'
+    # Define the ASCII black box characte
 
     # Regular expression pattern to match <clearance: Value></clearance> tags
     pattern = r'<([^>]*)>([^<]*)</\1>'
@@ -38,15 +37,17 @@ def replace_tags_with_black_box(text, clearance):
         value = match.group(1).strip()  # e.g., "clearance"
         content = match.group(2).strip()  # e.g., "Content"
         # Replace all non-space characters in the content with the black box character
-        clearance_delta = clearance_order[value] - clearance_order[clearance.lower()]
-        if clearance_delta == 1:
-            black_box = "⸱"
-        elif clearance_delta == 2:
-            black_box = ":"
-        elif clearance_delta == 3:
-            black_box = "⸫"
-        elif clearance_delta == 4:
-            black_box == "⸬"
+        black_box = ''
+        if clearance_order[value] == 1:
+            black_box = "**⚊**"
+        elif clearance_order[value] == 2:
+            black_box = "**⚌**"
+        elif clearance_order[value] == 3:
+            black_box = "**⚎**"
+        elif clearance_order[value] == 4:
+            black_box = "**⚏**"
+        elif clearance_order[value] == 5:
+            black_box = '█'
         replaced_content = re.sub(r'[^.,!?\'"(){}\[\]:;\\/\-\s]', black_box, content) if clearance_order[value] > clearance_order[clearance.lower()] else content
         # Construct the new tag with replaced content
         return replaced_content

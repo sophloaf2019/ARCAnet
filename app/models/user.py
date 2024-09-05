@@ -9,6 +9,22 @@ class User(db.Model, UserMixin):
     name = db.Column('name', db.String)
     password = db.Column('password', db.String)
     clearance = db.Column('clearance', db.String)
+
+    @property
+    def clearance_symbol(self):
+        if self.clearance == 'Declassified':
+            return "●"
+        elif self.clearance == 'Sensitive':
+            return "⚊"
+        elif self.clearance == 'Confidential':
+            return "⚌"
+        elif self.clearance == 'Classified':
+            return "⚎"
+        elif self.clearance == 'Secret':
+            return "⚏"
+        elif self.clearance == 'Top Secret':
+            return '█'
+
     assignment = db.Column('assignment', db.String)
     # Declassified
     # Sensitive
