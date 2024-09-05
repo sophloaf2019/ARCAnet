@@ -9,4 +9,4 @@ ensure that all models are imported into this package.
 
 '''
 
-from .yourmodel import YourModel
+from .user import User

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{{url_for('home')}}">Return home</a>
+    <h1>DCII Entries</h1>
+    <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
+    {% for entry in entries %}
+        <a class="text-xl" href="{{url_for('show_entry', entry_id = entry.id)}}">{{entry.name}} ({{entry.clearance}})</a>
+    {% endfor %}
+    <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
+    <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
+    <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
+    <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
+    <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
+    <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
+    <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
+    <p class="text-xl">...(1263 more identical lines)</p>
+
+{% endblock %}

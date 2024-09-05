@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome to ARCAnet, <span class="text-amber-500">{{current_user.username}}</span>.</h1>
+    <p>You are logged in as <span class="text-amber-500 font-extrabold">{{current_user.name}}</span>. Not you? <a href="{{url_for('logout')}}">Logout.</a></p>
+    <h2>Bulletin board</h2>
+    <p>No announcements at this time.</p>
+    <h2>Current assignment</h2>
+    <p>{{current_user.assignment}}</p>
+    <p class="text-2xl font-extrabold text-neutral-400">&lt;!-- EDI Documents --&gt;</p>
+    <a href="{{ url_for('dcii_entries_overview') }}" class="text-2xl font-extrabold text-amber-500">DCII Entries</a>
+    <p class="text-2xl font-extrabold text-neutral-400">&lt;!-- ARCA Research --&gt;</p>
+{% endblock %}

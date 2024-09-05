@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{{url_for('dcii_entries_overview')}}">Return to all entries</a>
+    {{entry.body|safe}}
+{% endblock %}

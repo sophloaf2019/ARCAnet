@@ -8,6 +8,10 @@ observe yourresource.py for a template.
 ensure that all resources are imported into this package.
 
 """
+
+from .home import *
+from .dcii import *
+
 # FILTERS
 @app.template_filter('comma_format')
 def comma_format(value):

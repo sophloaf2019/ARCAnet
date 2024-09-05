@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome to ARCAnet!</h1>
+    <p>Enter your login information.</p>
+    <form action="{{url_for('login')}}" method="post" autocomplete="off">
+        {% import 'components/forms.html' as forms %}
+
+        {{ forms.field('username', 'Username') }}
+        {{ forms.field('password', 'Password', 'password') }}
+
+        <button>Submit</button>
+    </form>
+{% endblock %}

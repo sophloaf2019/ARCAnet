@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+/* Make Open Sans the default font */
+body {
+    font-family: "Source Code Pro", sans-serif;
+}
+
+input {
+    @apply rounded-none border-2 border-neutral-300 block
+}
+
+button {
+    @apply bg-amber-300 p-2 block mt-4 border-2 border-neutral-700
+}

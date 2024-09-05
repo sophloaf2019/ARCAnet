@@ -1,0 +1,4 @@
+{% macro field(name, label, type='text') %}
+    <label for="{{name}}">{{label}}</label>
+    <input type="{{type}}" name="{{name}}">
+{% endmacro %}
