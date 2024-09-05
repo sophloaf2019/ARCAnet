@@ -3,8 +3,8 @@
 # Configuration
 REPO="sophloaf2019/ARCAnet" # Replace with your GitHub username/repo
 BRANCH="main"                             # Replace with the branch you want to track (e.g., main)
-APP_DIR="./"               # Replace with the path to your app on the droplet
-VENV_DIR="./venv"             # Replace with the path to your virtual environment
+APP_DIR="./ARCAnet/"               # Replace with the path to your app on the droplet
+VENV_DIR="./ARCAnet/venv"             # Replace with the path to your virtual environment
 APP_SCRIPT="run.py"                   # Replace with your app's main script
 
 # Step 1: Check the latest commit hash on GitHub
