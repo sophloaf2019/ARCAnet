@@ -40,11 +40,13 @@ def replace_tags_with_black_box(text, clearance):
         # Replace all non-space characters in the content with the black box character
         clearance_delta = clearance_order[value] - clearance_order[clearance.lower()]
         if clearance_delta == 1:
-            black_box = "░"
+            black_box = "⸱"
         elif clearance_delta == 2:
-            black_box = "▒"
+            black_box = ":"
         elif clearance_delta == 3:
-            black_box = "▓"
+            black_box = "⸫"
+        elif clearance_delta == 4:
+            black_box == "⸬"
         replaced_content = re.sub(r'[^.,!?\'"(){}\[\]:;\\/\-\s]', black_box, content) if clearance_order[value] > clearance_order[clearance.lower()] else content
         # Construct the new tag with replaced content
         return replaced_content
