@@ -37,17 +37,8 @@ def replace_tags_with_black_box(text, clearance):
         value = match.group(1).strip()  # e.g., "clearance"
         content = match.group(2).strip()  # e.g., "Content"
         # Replace all non-space characters in the content with the black box character
-        black_box = ''
-        if clearance_order[value] == 1:
-            black_box = "**⚊**"
-        elif clearance_order[value] == 2:
-            black_box = "**⚌**"
-        elif clearance_order[value] == 3:
-            black_box = "**⚎**"
-        elif clearance_order[value] == 4:
-            black_box = "**⚏**"
-        elif clearance_order[value] == 5:
-            black_box = '█'
+        black_box = '█'
+            
         replaced_content = re.sub(r'[^.,!?\'"(){}\[\]:;\\/\-\s]', black_box, content) if clearance_order[value] > clearance_order[clearance.lower()] else content
         # Construct the new tag with replaced content
         return replaced_content
