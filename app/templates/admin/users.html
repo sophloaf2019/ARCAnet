@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{{url_for('home')}}">Return home</a>
+    <h1>Users</h1>
+    {% for user in users %}
+        <a class="block mb-4" href="{{url_for('open_user_profile', username = user.username)}}">{{user.name}} ({{user.username}})</a>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{{url_for('user_profiles')}}">Go back</a>
+    <h1>Viewing "<span class="text-amber-500">{{user.username}}</span>"</h1>
+    {% if current_user.clearance >= 4  or user == current_user %}
+        <a href="{{url_for('edit_profile', username = user.username)}}">Edit profile</a>
+    {% endif %}
+    <p><span class="font-extrabold">Name: </span>{{user.name}}</p>
+    <p><span class="font-extrabold">Clearance: </span>Level {{user.clearance}}</p>
+    <p><span class="font-extrabold">Assignment: </span>{{user.assignment}} ({{user.role}})</p>
+    <div>
+        {{user.body|process_tags(1, current_user)|markdown_render|safe}}
+    </div>
+{% endblock %}

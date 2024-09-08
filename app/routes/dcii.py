@@ -50,7 +50,7 @@ def process_tags_filter(input_string, mass_clearance, current_user):
 
 @app.template_filter('markdown_render')
 def markdown_render(input_string):
-    return markdown.markdown(input_string)
+    return markdown.markdown(str(input_string))
 
 @app.route('/dcii')
 @login_required

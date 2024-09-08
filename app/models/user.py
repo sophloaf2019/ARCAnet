@@ -9,11 +9,14 @@ class User(db.Model, UserMixin):
     name = db.Column('name', db.String)
     password = db.Column('password', db.String)
     clearance = db.Column('clearance', db.Integer)
-
+    # Declassified  :  0
+    # Sensitive     :  1
+    # Confidential  :  2
+    # Classified    :  3
+    # Secret        :  4
+    # Top Secret    :  5
     assignment = db.Column('assignment', db.String)
-    # Declassified   0
-    # Sensitive      1
-    # Confidential   2
-    # Classified     3
-    # Secret         4
-    # Top Secret     5
+    role = db.Column('role', db.String)
+    
+    body = db.Column('body', db.Text)
+    

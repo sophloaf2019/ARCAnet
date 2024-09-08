@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{{url_for('open_user_profile', username = user.username)}}">Go back to user's profile</a>
+    <h1>Editing "<span class="text-amber-500">{{user.username}}</span>"</h1>
+    <form action="{{ url_for('save_profile', username = user.username) }}" method="POST">
+        {% import 'components/forms.html' as forms %}
+        {{ forms.field('username', 'Username', value = user.username) }}
+        {{ forms.field('name', 'Name', value = user.name)}}
+        {% if current_user.clearance >= 4 %}
+            {{ forms.field('clearance', 'Clearance', type = 'number', value = user.clearance)}}
+            {{ forms.field('assignment', 'Assignment', value = user.assignment)}}
+            {{ forms.field('role', 'Role', value = user.role)}}
+        {% endif %}
+        {{ forms.field('assignment', 'Assignment', value = user.assignment)}}
+        {{ forms.field('role', 'Role', value = user.role)}}
+        {{ forms.textarea('body', 'Body', value = user.body)}}
+        <button>Submit</button>
+    </form>
+{% endblock %} 
