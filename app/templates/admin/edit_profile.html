@@ -12,6 +12,7 @@
             {{ forms.field('assignment', 'Assignment', value = user.assignment)}}
             {{ forms.field('role', 'Role', value = user.role)}}
         {% endif %}
+        {{ forms.field('password', 'Password', type = 'password', value = user.password)}}
         {{ forms.field('assignment', 'Assignment', value = user.assignment)}}
         {{ forms.field('role', 'Role', value = user.role)}}
         {{ forms.textarea('body', 'Body', value = user.body)}}
