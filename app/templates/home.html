@@ -7,7 +7,7 @@
     <p>No announcements at this time.</p>
     <h2>User profile</h2>
     <p><span class="font-extrabold">Assignment: </span>{{current_user.assignment}}</p>
-    <p><span class="font-extrabold">Clearance: </span>Currently viewing with "<span class="font-extrabold">{{current_user.clearance}}</span>" clearance</p>
+    <p><span class="font-extrabold">Clearance: </span>Currently viewing with Level {{current_user.clearance}} clearance</p>
     <p class="text-2xl font-extrabold text-neutral-400">&lt;!-- EDI Documents --&gt;</p>
     <a href="{{ url_for('dcii_entries_overview') }}" class="text-2xl font-extrabold text-amber-500">DCII Entries</a>
     <p class="text-2xl font-extrabold text-neutral-400">&lt;!-- ARCA Research --&gt;</p>
