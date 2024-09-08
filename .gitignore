@@ -3,3 +3,4 @@ config.py
 /node_modules
 /venv
 deploy.sh
+app.db
