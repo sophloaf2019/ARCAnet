@@ -114,7 +114,8 @@ def add_addons(entry_id, subject_id):
             for key, value in data.items():
                 if hasattr(new_addon, key):  # Check if the instance has the attribute
                     setattr(new_addon, key, value)  # Set the attribute value
-            new_addon.subject_id = subject_id
+            subject = DCIISubject.query.filter_by(entry_id=entry_id, index=subject_id).first()
+            new_addon.subject_id = subject.id
             db.session.add(new_addon)
             db.session.commit()
             return redirect(url_for('add_addons', entry_id = entry_id, subject_id = subject_id))
