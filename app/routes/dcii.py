@@ -138,6 +138,12 @@ def edit_entry(id):
     entry = DCIIEntry.query.get(id)
     if request.method == "POST":
         data = form_to_dict(request.form)
+        cprint(data, 'yellow')
+        if data.get('delete') == 'on':
+            db.session.delete(entry)
+            db.session.commit()
+            flash("Entry deleted.")
+            return redirect(url_for('dcii_entries_overview'))
         try:
             for key, value in data.items():
                 if hasattr(entry, key):  # Check if the instance has the attribute
@@ -157,6 +163,11 @@ def edit_subject(entry_id, subject_id):
     subject = DCIISubject.query.filter_by(entry_id=entry_id, index=subject_id).first()
     if request.method == "POST":
         data = form_to_dict(request.form)
+        if data.get('delete') == 'on':
+            db.session.delete(subject)
+            db.session.commit()
+            flash("Subject deleted.")
+            return redirect(url_for('dcii_entries_overview'))
         try:
             for key, value in data.items():
                 if hasattr(subject, key):  # Check if the instance has the attribute
@@ -181,6 +192,11 @@ def edit_addon(entry_id, subject_id, addon_id):
             if addon:
                 if request.method == "POST":
                     data = form_to_dict(request.form)
+                    if data.get('delete') == 'on':
+                        db.session.delete(addon)
+                        db.session.commit()
+                        flash("Addon deleted.")
+                        return redirect(url_for('dcii_entries_overview'))
                     try:
                         for key, value in data.items():
                             if hasattr(addon, key):  # Check if the instance has the attribute
