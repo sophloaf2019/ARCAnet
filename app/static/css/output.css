@@ -1102,9 +1102,9 @@ video {
   position: static;
 }
 
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 .my-8 {
@@ -1124,8 +1124,8 @@ video {
   display: table;
 }
 
-.max-w-screen-xl {
-  max-width: 1280px;
+.max-w-screen-lg {
+  max-width: 1024px;
 }
 
 .border-2 {
@@ -1191,7 +1191,7 @@ body {
   font-family: "Source Code Pro", sans-serif;
 }
 
-input {
+input, textarea {
   display: block;
   border-radius: 0px;
   border-width: 2px;
@@ -1208,4 +1208,18 @@ button {
   --tw-bg-opacity: 1;
   background-color: rgb(252 211 77 / var(--tw-bg-opacity));
   padding: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .sm\:mx-8 {
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\:mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{{url_for('add_new_subject', id = entry.id)}}">Go back to "Add Subjects"</a>
+    <a href="{{url_for('show_entry', entry_id = entry.id)}}">Show entry</a>
+    <h1>New DCII addon for SUBJECT {{subject.id}}</h1>
+    <h2>Existing addons</h2>
+    {% if subject.addons %}
+        {% for addon in subject.addons %}
+            <p>{{addon.addon_type}} {{addon.index}}</p>
+        {% endfor %}
+    {% endif %}
+    <form action="{{ url_for('add_addons', entry_id = entry.id, subject_id = subject.index) }}" method="POST">
+        {% import 'components/forms.html' as forms %}
+
+        <h2>Index</h2>
+        <p class="italic">Numbers the addon, like FOOTNOTE 1</p>
+        <label for="index">Index</label>
+        <input type="number" name="index" value="{{subject.get_last_index}}">
+
+        <h2>Type</h2>
+        <p class="italic">Footnote, Addendum, Transcription, etc.</p>
+        {{ forms.field('addon_type', 'Type') }}
+
+        <h2>Body of text</h2>
+        <p class="italic">Use numerical tags in angled brackets (like &lt;1&gt;this&lt;/1&gt;) to protect data.</p>
+        <p class="italic">HTML tags are supported.</p>
+        <p>Declassified: 0<br>Sensitive: 1<br>Confidential: 2<br>Classified: 3<br>Secret: 4<br>Top Secret: 5</p>
+        {{ forms.textarea('body', 'Body')}}
+        <button>Create new addon +</button>
+    </form>
+{% endblock %}

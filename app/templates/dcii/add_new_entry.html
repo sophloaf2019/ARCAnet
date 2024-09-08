@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{{url_for('dcii_entries_overview')}}">Return to DCII homepage</a>
+    <h1>New DCII entry</h1>
+    <h2>Existing entries</h2>
+    {% if entries %}
+        {% for entry in entries %}
+            <a href="{{url_for('add_new_subject', id = entry.id) }}">ENTRY {{entry.id}}</a>
+        {% endfor %}
+    {% endif %}
+    <form action="{{ url_for('add_new_entry') }}" method="POST">
+        {% import 'components/forms.html' as forms %}
+        <h2>Entry ID</h2>
+        {{ forms.field('id', 'ID') }}
+        <button>Create new entry +</button>
+    </form>
+{% endblock %}

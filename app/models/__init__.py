@@ -10,3 +10,4 @@ ensure that all models are imported into this package.
 '''
 
 from .user import User
+from .dcii_entry import *

@@ -9,7 +9,7 @@ body {
     font-family: "Source Code Pro", sans-serif;
 }
 
-input {
+input, textarea {
     @apply rounded-none border-2 border-neutral-300 block
 }
 

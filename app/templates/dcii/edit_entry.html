@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{{url_for('show_entry', entry_id = entry.id)}}">Return to ENTRY {{entry.id}}</a>
+    <a href="{{url_for('show_entry', entry_id = entry.id)}}">Show entry</a>
+    <h1>Editing ENTRY {{entry.id}}</h1>
+    <form action="{{url_for('edit_entry', id = entry.id)}}" method="POST">
+        {% import 'components/forms.html' as forms %}
+        <h2>Entry ID</h2>
+        {{ forms.field('id', 'ID') }}
+        <button>Save changes</button>
+    </form>
+{% endblock %}

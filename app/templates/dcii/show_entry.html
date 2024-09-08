@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{{url_for('dcii_entries_overview')}}">Return to all entries</a>
+    <h1>ENTRY {{entry.id}}</h1>
+    {% if current_user.clearance >= 4 %}
+        <a href="{{ url_for('edit_entry', id = entry.id) }}">Edit this entry</a>
+    {% endif %}
+    {% for subject in entry.subjects %}
+        <h2>SUBJECT {{subject.index}}</h2>
+        {% if current_user.clearance >= 4 %}
+            <a href="{{ url_for('edit_subject', entry_id = entry.id, subject_id = subject.index) }}">Edit this subject</a>
+        {% endif %}
+        <p><span class="font-extrabold">Classification</span>: {{subject.classification_type|process_tags(subject.clearance, current_user)}} ({{subject.classification_tags|process_tags(subject.clearance, current_user)}} {{subject.classification_qualifier|process_tags(subject.clearance, current_user)}})</p>
+        <p><span class="font-extrabold">Containment</span>: {{subject.containment_status|process_tags(subject.clearance, current_user)}} ({{subject.containment_tags|process_tags(subject.clearance, current_user)}})</p>
+        <p><span class="font-extrabold">Danger/Probability</span>: {{subject.danger|process_tags(subject.clearance, current_user)}}/{{subject.probability|process_tags(subject.clearance, current_user)}}</p>
+        <p><span class="font-extrabold">Restriction</span>: Level {{subject.clearance}}</p>
+        <p class="font-extrabold">Description</p>
+        <div>
+            {{subject.body|process_tags(subject.clearance, current_user)|markdown_render|safe}}
+        </div>
+    {% endfor %}
+    {% for subject in entry.subjects %}
+        {% for addon in subject.addons|sort(attribute='index') %}
+            <h3>{{addon.addon_type|upper}} {{entry.id}}-{{addon.index}}</h3>
+            {% if current_user.clearance >= 4 %}
+                <a href="{{ url_for('edit_addon', entry_id = entry.id, subject_id = subject.index, addon_id = addon.index) }}">Edit this addon</a>
+            {% endif %}
+            <div>
+                {{addon.body|process_tags(subject.clearance, current_user)|markdown_render|safe}}
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

@@ -1,13 +1,12 @@
+import re
+import markdown
+from termcolor import cprint
 from flask import current_app as app
 from flask import flash, redirect, render_template, request, url_for
-from flask_login import login_required, login_user, logout_user, current_user
-from .. import form_to_dict
-from ..models import User
+from flask_login import current_user, login_required, login_user, logout_user
 
-import os
-import yaml
-import markdown
-import re
+from .. import db, form_to_dict
+from ..models import DCIIAddon, DCIIEntry, DCIISubject, User
 
 clearance_order = {
     'declassified': 0,
@@ -18,111 +17,178 @@ clearance_order = {
     'top secret': 5,
 }
 
-class Entry:
-    def __init__(self, name, body, clearance, id):
-        self.name = name
-        self.body = body
-        self.clearance = clearance
-        self.id = id
+def process_tags(input_string, current_user):
+    # Regular expression pattern to find tags in the format <number>Data</number>
+    pattern = r'<(\d+)>([^<]+)</\1>'
 
-def replace_tags_with_black_box(text, clearance):
-    # Define the ASCII black box characte
-
-    # Regular expression pattern to match <clearance: Value></clearance> tags
-    pattern = r'<([^>]*)>([^<]*)</\1>'
-
-    # Function to replace the content of the tags with black boxes and remove the tags
-    def replace_match(match):
-        # Extract the tag type and content
-        value = match.group(1).strip()  # e.g., "clearance"
-        content = match.group(2).strip()  # e.g., "Content"
-        # Replace all non-space characters in the content with the black box character
-        black_box = '█'
-            
-        replaced_content = re.sub(r'[^.,!?\'"(){}\[\]:;\\/\-\s]', black_box, content) if clearance_order[value] > clearance_order[clearance.lower()] else content
-        # Construct the new tag with replaced content
-        return replaced_content
-
-    # Use re.sub with the pattern and replacement function
-    result = re.sub(pattern, replace_match, text)
-    return result
-
-def read_markdown_content(file_path):
-    """Reads a Markdown file, extracts its content and YAML front matter, and returns an Entry object."""
-    if not os.path.isfile(file_path):
-        return None
-
-    with open(file_path, 'r', encoding='utf-8') as file:
-        content = file.read()
-
-        if content.startswith('---'):
-            _, frontmatter, body = content.split('---', 2)
-            yaml_data = yaml.safe_load(frontmatter)
+    def redact_content(tag_number, tag_content):
+        if current_user.clearance < tag_number:
+            # Replace alphanumerical characters with vertical black box
+            return re.sub(r'[a-zA-Z0-9]', '█', tag_content)
         else:
-            body = content
-            yaml_data = {}
-        body = replace_tags_with_black_box(body, current_user.clearance)
-        clearance = yaml_data.get('clearance', 'default_clearance')
-        id = yaml_data.get('id', 'default_id')
+            return tag_content
 
-        # Convert Markdown body to HTML
-        body_html = markdown.markdown(body)
+    def apply_redaction(match):
+        tag_number = int(match.group(1))
+        tag_content = match.group(2)
+        redacted_content = redact_content(tag_number, tag_content)
+        return f'{redacted_content}'
 
-        # Create and return an Entry instance
-        name = os.path.splitext(os.path.basename(file_path))[0]  # Extract filename without extension
-        return Entry(name=name, body=body_html, clearance=clearance, id = id)
+    # Process the input string from innermost to outermost tags
+    while re.search(pattern, input_string):
+        result = re.sub(pattern, apply_redaction, input_string)
+        input_string = result
 
-def read_all_markdown_files(directory):
-    """Reads all Markdown files in the specified directory and returns a list of Entry objects."""
-    entries = []
+    return input_string
+        
+        
+@app.template_filter('process_tags')
+def process_tags_filter(input_string, mass_clearance, current_user):
+    input_string = str(input_string)
+    input_string = "<" + str(mass_clearance) + ">" + input_string + "</" + str(mass_clearance) + ">"
+    return process_tags(str(input_string), current_user)
 
-    # Iterate through all files in the directory
-    for filename in os.listdir(directory):
-        if filename.endswith('.md'):
-            file_path = os.path.join(directory, filename)
-            entry = read_markdown_content(file_path)
-            if entry:
-                entries.append(entry)
-
-    return entries
-
-def read_markdown_file(entry_id):
-    """Reads a specific Markdown file by entry ID and returns an Entry object."""
-    # Calculate the relative path to the dcii_entries directory
-    current_dir = os.path.dirname(__file__)
-    entries_dir = os.path.join(current_dir, '..', 'dcii_entries')
-    entries_dir = os.path.normpath(entries_dir)
-
-    # Construct the expected filename
-    filename = f"ENTRY {entry_id}.md"
-    file_path = os.path.join(entries_dir, filename)
-
-    return read_markdown_content(file_path)
-
-
-
+@app.template_filter('markdown_render')
+def markdown_render(input_string):
+    return markdown.markdown(input_string)
 
 @app.route('/dcii')
 @login_required
 def dcii_entries_overview():
-    current_dir = os.path.dirname(__file__)  # Directory of the current script
-    entries_dir = os.path.join(current_dir, '..', 'dcii_entries')  # Adjust for relative path
-
-    # Normalize the path to handle ".." and other irregularities
-    entries_dir = os.path.normpath(entries_dir)
-
-    # Use the function to process the markdown files
-    entries = read_all_markdown_files(entries_dir)
-    return render_template('dcii_overview.html', entries = entries)
+    entries = DCIIEntry.query.all()
+    return render_template('dcii/dcii_overview.html', entries = entries)
 
 @app.route('/dcii/<int:entry_id>')
+@login_required
 def show_entry(entry_id):
-    # Read the markdown file and convert it to an Entry object
-    entry = read_markdown_file(entry_id)
+    entry = DCIIEntry.query.get(entry_id)
+    return render_template('dcii/show_entry.html', entry = entry)
 
-    # If the file does not exist, return a 404 error
-    if entry is None:
-        flash('That entry doesn\'t exist.')
+@app.route('/dcii/add_new_entry', methods=['GET', 'POST'])
+@login_required
+def add_new_entry():
+    if request.method == "POST":
+        data = form_to_dict(request.form)
+        new_entry = DCIIEntry(id = data.get('id'))
+        db.session.add(new_entry)
+        db.session.commit()
+        return redirect(url_for('add_new_entry'))
+    if current_user.clearance >= 4:
+        entries = DCIIEntry.query.all()
+        return render_template('dcii/add_new_entry.html', entries = entries)
+    else:
+        flash('You can\'t access that page.')
         return redirect(url_for('dcii_entries_overview'))
     
-    return render_template('show_entry.html', entry = entry)
+@app.route('/dcii/<int:id>/add_new_subject', methods=['GET', 'POST'])
+@login_required
+def add_new_subject(id):
+    if current_user.clearance >= 4:
+        if request.method == "POST":
+            data = form_to_dict(request.form)
+            new_subject = DCIISubject()
+            for key, value in data.items():
+                if hasattr(new_subject, key):  # Check if the instance has the attribute
+                    setattr(new_subject, key, value)  # Set the attribute value
+            new_subject.entry_id = id
+            db.session.add(new_subject)
+            db.session.commit()
+            return redirect(url_for('add_new_subject', id = id))
+        entry = DCIIEntry.query.get(id)
+        if entry:
+            return render_template('dcii/add_new_subject.html', entry = entry)
+        else:
+            flash('That entry has been deleted.')
+            return redirect(url_for('dcii_entries_overview'))
+    else:
+        flash('You can\'t access that page.')
+        return redirect(url_for('dcii_entries_overview'))
+
+@app.route('/dcii/<int:entry_id>/<int:subject_id>/add_addons', methods=['GET','POST'])
+@login_required
+def add_addons(entry_id, subject_id):
+    if current_user.clearance >= 4:
+        if request.method == "POST":
+            data = form_to_dict(request.form)
+            new_addon = DCIIAddon()
+            for key, value in data.items():
+                if hasattr(new_addon, key):  # Check if the instance has the attribute
+                    setattr(new_addon, key, value)  # Set the attribute value
+            new_addon.subject_id = subject_id
+            db.session.add(new_addon)
+            db.session.commit()
+            return redirect(url_for('add_addons', entry_id = entry_id, subject_id = subject_id))
+        entry = DCIIEntry.query.get(entry_id)
+        subject = DCIISubject.query.filter_by(entry_id=entry.id, index=subject_id).first()
+        print(entry_id)
+        print(subject_id)
+        if entry and subject:
+            return render_template("dcii/add_new_addons.html", entry = entry, subject = subject)
+        else:
+            flash('That entry has been deleted.')
+            return redirect(url_for('dcii_entries_overview'))
+    else:
+        flash('You can\'t access that page.')
+        return redirect(url_for('dcii_entries_overview'))
+    
+    
+@app.route('/dcii/<int:id>/edit', methods = ['GET','POST'])
+@login_required
+def edit_entry(id):
+    entry = DCIIEntry.query.get(id)
+    if request.method == "POST":
+        data = form_to_dict(request.form)
+        try:
+            for key, value in data.items():
+                if hasattr(entry, key):  # Check if the instance has the attribute
+                    setattr(entry, key, value)  # Set the attribute value
+        
+            db.session.commit()
+            flash("Changes saved.")
+            return redirect(url_for('edit_entry', id = entry.id))
+        except Exception as e:
+            flash(str(e))
+        
+    return render_template('dcii/edit_entry.html', entry = entry)
+
+@app.route('/dcii/<int:entry_id>/<int:subject_id>/edit', methods = ['GET','POST'])
+@login_required
+def edit_subject(entry_id, subject_id):
+    subject = DCIISubject.query.filter_by(entry_id=entry_id, index=subject_id).first()
+    if request.method == "POST":
+        data = form_to_dict(request.form)
+        try:
+            for key, value in data.items():
+                if hasattr(subject, key):  # Check if the instance has the attribute
+                    setattr(subject, key, value)  # Set the attribute value
+        
+            db.session.commit()
+            flash("Changes saved.")
+            return redirect(url_for('edit_subject', entry_id = subject.entry.id, subject_id = subject.index))
+        except Exception as e:
+            flash(str(e))
+        
+    return render_template('dcii/edit_subject.html', subject = subject)
+
+@app.route('/dcii/<int:entry_id>/<int:subject_id>/<int:addon_id>/edit', methods = ['GET','POST'])
+@login_required
+def edit_addon(entry_id, subject_id, addon_id):
+    entry = DCIIEntry.query.get(entry_id)
+    if entry:
+        subject = next((s for s in entry.subjects if s.index == subject_id), None)
+        if subject:
+            addon = next((a for a in subject.addons if a.index == addon_id), None)
+            if addon:
+                if request.method == "POST":
+                    data = form_to_dict(request.form)
+                    try:
+                        for key, value in data.items():
+                            if hasattr(addon, key):  # Check if the instance has the attribute
+                                setattr(addon, key, value)  # Set the attribute value
+                    
+                        db.session.commit()
+                        flash("Changes saved.")
+                        return redirect(url_for('edit_addon', entry_id = addon.subject.entry.id, subject_id = addon.subject.index, addon_id = addon.index))
+                    except Exception as e:
+                        flash(str(e))
+                return render_template('dcii/edit_addon.html', addon = addon)

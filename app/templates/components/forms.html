@@ -1,4 +1,9 @@
-{% macro field(name, label, type='text') %}
+{% macro field(name, label, type='text', value='') %}
     <label for="{{name}}">{{label}}</label>
-    <input type="{{type}}" name="{{name}}">
+    <input type="{{type}}" name="{{name}}" value="{{value}}">
+{% endmacro %}
+
+{% macro textarea(name, label, value='') %}
+    <label for="{{name}}">{{label}}</label>
+    <textarea name="{{name}}" cols="120" rows="40">{{value}}</textarea>
 {% endmacro %}

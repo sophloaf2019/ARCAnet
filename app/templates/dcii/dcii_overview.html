@@ -3,9 +3,12 @@
 {% block content %}
     <a href="{{url_for('home')}}">Return home</a>
     <h1>DCII Entries</h1>
+    {% if current_user.clearance >= 4 %}
+        <a href="{{ url_for('add_new_entry') }}">Add or edit entries +</a>
+    {% endif %}
     <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
     {% for entry in entries %}
-        <a class="text-xl block" href="{{url_for('show_entry', entry_id = entry.id)}}">{{entry.name}} ({{entry.clearance}})</a>
+        <a class="text-xl block" href="{{url_for('show_entry', entry_id = entry.id)}}">ENTRY {{entry.id}}</a>
     {% endfor %}
     <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
     <p class="text-xl">{ DATA STREAM CORRUPTED }</p>
