@@ -33,6 +33,7 @@
         <p class="italic">Uses markdown for styling.</p>
         
         {{ forms.textarea('body', 'Body', value = subject.body)}}
+        {{ forms.field('delete', 'Delete?', type = 'checkbox', value = 'on')}}
         <button>Save changes</button>
     </form>
 {% endblock %}

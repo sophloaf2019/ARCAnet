@@ -21,6 +21,7 @@
         <p class="italic">HTML tags are supported.</p>
         <p>Declassified: 0<br>Sensitive: 1<br>Confidential: 2<br>Classified: 3<br>Secret: 4<br>Top Secret: 5</p>
         {{ forms.textarea('body', 'Body', value = addon.body)}}
+        {{ forms.field('delete', 'Delete?', type = 'checkbox', value = 'on')}}
         <button>Save changes</button>
     </form>
 {% endblock %}
