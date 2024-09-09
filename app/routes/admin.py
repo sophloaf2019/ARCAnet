@@ -37,7 +37,7 @@ def save_profile(username):
             db.session.delete(user)
             db.session.commit()
             flash("Entry deleted.")
-            return redirect(url_for('dcii_entries_overview'))
+            return redirect(url_for('user_profiles'))
         for key, value in data.items():
             if hasattr(user, key):  # Check if the instance has the attribute
                 setattr(user, key, value)  # Set the attribute value
