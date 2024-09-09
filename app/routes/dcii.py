@@ -17,40 +17,7 @@ clearance_order = {
     'top secret': 5,
 }
 
-def process_tags(input_string, current_user):
-    # Regular expression pattern to find tags in the format <number>Data</number>
-    pattern = r'<(\d+)>([^<]+)</\1>'
 
-    def redact_content(tag_number, tag_content):
-        if current_user.clearance < tag_number:
-            # Replace alphanumerical characters with vertical black box
-            return re.sub(r'[a-zA-Z0-9]', '█', tag_content)
-        else:
-            return tag_content
-
-    def apply_redaction(match):
-        tag_number = int(match.group(1))
-        tag_content = match.group(2)
-        redacted_content = redact_content(tag_number, tag_content)
-        return f'{redacted_content}'
-
-    # Process the input string from innermost to outermost tags
-    while re.search(pattern, input_string):
-        result = re.sub(pattern, apply_redaction, input_string)
-        input_string = result
-
-    return input_string
-        
-        
-@app.template_filter('process_tags')
-def process_tags_filter(input_string, mass_clearance, current_user):
-    input_string = str(input_string)
-    input_string = "<" + str(mass_clearance) + ">" + input_string + "</" + str(mass_clearance) + ">"
-    return process_tags(str(input_string), current_user)
-
-@app.template_filter('markdown_render')
-def markdown_render(input_string):
-    return markdown.markdown(str(input_string))
 
 @app.route('/dcii')
 @login_required

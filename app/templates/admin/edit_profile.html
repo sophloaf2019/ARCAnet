@@ -15,6 +15,7 @@
         {{ forms.field('password', 'Password', type = 'password', value = user.password)}}
         
         {{ forms.textarea('body', 'Body', value = user.body)}}
+        {{ forms.field('delete', 'Delete?', type = 'checkbox', value = 'on')}}
         <button>Submit changes</button>
     </form>
 {% endblock %}

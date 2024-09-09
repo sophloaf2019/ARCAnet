@@ -33,6 +33,11 @@ def save_profile(username):
     user = User.query.filter_by(username = username).first()
     if current_user.clearance >= 4 or user == current_user:
         data = form_to_dict(request.form)
+        if data.get('delete') == 'on':
+            db.session.delete(user)
+            db.session.commit()
+            flash("Entry deleted.")
+            return redirect(url_for('dcii_entries_overview'))
         for key, value in data.items():
             if hasattr(user, key):  # Check if the instance has the attribute
                 setattr(user, key, value)  # Set the attribute value
