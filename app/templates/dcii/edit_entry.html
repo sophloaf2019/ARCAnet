@@ -11,4 +11,43 @@
         {{ forms.field('delete', 'Delete?', type = 'checkbox', value = 'on')}}
         <button>Save changes</button>
     </form>
+    <h2>Subjects</h2>
+    <h3>Existing subjects</h3>
+    {% if entry.subjects %}
+        {% for subject in entry.subjects %}
+            <a href="{{url_for('edit_subject', entry_id = entry.id, subject_id = subject.index) }}">SUBJECT {{subject.index}}</a>
+        {% endfor %}
+    {% endif %}
+    <form action="{{ url_for('add_new_subject', id = entry.id) }}" method="POST">
+        {% import 'components/forms.html' as forms %}
+
+        <h3>Info</h3>
+        <p class="italic">Numbers the subject, like SUBJECT 1</p>
+        <label for="index">Index</label>
+        <input type="number" name="index" value="{{entry.get_last_index}}">
+        {{ forms.field('clearance', 'Clearance', 'number') }}
+
+        <h3>Classification</h3>
+        <p class="italic">Type (Tag, Tag, Tag Qualifier)</p>
+        {{ forms.field('classification_type', 'Type') }}
+        {{ forms.field('classification_qualifier', 'Qualifier') }}
+        {{ forms.field('classification_tags', 'Tags') }}
+
+        <h3>Containment</h3>
+        <p class="italic">Status (Tag, Tag, Tag)</p>
+        {{ forms.field('containment_status', 'Status') }}
+        {{ forms.field('containment_tags', 'Tags') }}
+
+        <h3>Risk factor</h3>
+        <p class="italic">Danger/Probability</p>
+        {{ forms.field('danger', 'Danger', 'number') }}
+        {{ forms.field('probability', 'Probability', 'number') }}
+
+        <h3>Body of text</h3>
+        <p class="italic">Use numerical tags in angled brackets (like &lt;1&gt;this&lt;/1&gt;) to protect data.</p>
+        <p class="italic">HTML tags are supported.</p>
+        <p>Declassified: 0<br>Sensitive: 1<br>Confidential: 2<br>Classified: 3<br>Secret: 4<br>Top Secret: 5</p>
+        {{ forms.textarea('body', 'Body')}}
+        <button>Create new subject +</button>
+    </form>
 {% endblock %}

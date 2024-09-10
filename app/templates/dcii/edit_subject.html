@@ -35,5 +35,30 @@
         {{ forms.textarea('body', 'Body', value = subject.body)}}
         {{ forms.field('delete', 'Delete?', type = 'checkbox', value = 'on')}}
         <button>Save changes</button>
+        
+    </form>
+    <h2>Addons</h2>
+    <h3>Existing addons</h3>
+    {% if subject.addons %}
+        {% for addon in subject.addons %}
+            <a href="{{url_for('edit_addon', entry_id = addon.subject.entry.id, subject_id = addon.subject.index, addon_id = addon.index) }}">{{addon.addon_type|upper}} {{addon.index}}</a>
+        {% endfor %}
+    {% endif %}
+    <form action="{{ url_for('add_addons', entry_id = subject.entry.id, subject_id = subject.index) }}" method="POST">
+        {% import 'components/forms.html' as forms %}
+
+        <h3>Index</h3>
+        <p class="italic">Numbers the addon, like FOOTNOTE 1</p>
+        <label for="index">Index</label>
+        <input type="number" name="index" value="{{subject.get_last_index}}">
+
+        <h3>Type</h3>
+        <p class="italic">Footnote, Addendum, Transcription, etc.</p>
+        {{ forms.field('addon_type', 'Type') }}
+
+        <h3>Body of text</h3>
+        <p class="italic">Use numerical tags in angled brackets (like &lt;1&gt;this&lt;/1&gt;) to protect data.</p>
+        {{ forms.textarea('body', 'Body')}}
+        <button>Create new addon +</button>
     </form>
 {% endblock %}

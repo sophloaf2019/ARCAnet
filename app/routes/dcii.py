@@ -39,7 +39,7 @@ def add_new_entry():
         new_entry = DCIIEntry(id = data.get('id'))
         db.session.add(new_entry)
         db.session.commit()
-        return redirect(url_for('add_new_entry'))
+        return redirect(url_for('edit_entry', id = new_entry.id))
     if current_user.clearance >= 4:
         entries = DCIIEntry.query.all()
         return render_template('dcii/add_new_entry.html', entries = entries)
@@ -47,7 +47,7 @@ def add_new_entry():
         flash('You can\'t access that page.')
         return redirect(url_for('dcii_entries_overview'))
     
-@app.route('/dcii/<int:id>/add_new_subject', methods=['GET', 'POST'])
+@app.route('/dcii/<int:id>/add_new_subject', methods=['POST'])
 @login_required
 def add_new_subject(id):
     if current_user.clearance >= 4:
@@ -60,16 +60,10 @@ def add_new_subject(id):
             new_subject.entry_id = id
             db.session.add(new_subject)
             db.session.commit()
-            return redirect(url_for('add_new_subject', id = id))
-        entry = DCIIEntry.query.get(id)
-        if entry:
-            return render_template('dcii/add_new_subject.html', entry = entry)
+            return redirect(url_for('edit_entry', id = id))
         else:
             flash('That entry has been deleted.')
             return redirect(url_for('dcii_entries_overview'))
-    else:
-        flash('You can\'t access that page.')
-        return redirect(url_for('dcii_entries_overview'))
 
 @app.route('/dcii/<int:entry_id>/<int:subject_id>/add_addons', methods=['GET','POST'])
 @login_required
@@ -85,20 +79,10 @@ def add_addons(entry_id, subject_id):
             new_addon.subject_id = subject.id
             db.session.add(new_addon)
             db.session.commit()
-            return redirect(url_for('add_addons', entry_id = entry_id, subject_id = subject_id))
-        entry = DCIIEntry.query.get(entry_id)
-        subject = DCIISubject.query.filter_by(entry_id=entry.id, index=subject_id).first()
-        print(entry_id)
-        print(subject_id)
-        if entry and subject:
-            return render_template("dcii/add_new_addons.html", entry = entry, subject = subject)
-        else:
-            flash('That entry has been deleted.')
-            return redirect(url_for('dcii_entries_overview'))
+            return redirect(url_for('edit_subject', entry_id = entry_id, subject_id = subject_id))
     else:
         flash('You can\'t access that page.')
         return redirect(url_for('dcii_entries_overview'))
-    
     
 @app.route('/dcii/<int:id>/edit', methods = ['GET','POST'])
 @login_required
@@ -132,10 +116,11 @@ def edit_subject(entry_id, subject_id):
     if request.method == "POST":
         data = form_to_dict(request.form)
         if data.get('delete') == 'on':
+            id = subject.entry.id
             db.session.delete(subject)
             db.session.commit()
             flash("Subject deleted.")
-            return redirect(url_for('dcii_entries_overview'))
+            return redirect(url_for('edit_entry', id = id))
         try:
             for key, value in data.items():
                 if hasattr(subject, key):  # Check if the instance has the attribute
@@ -160,11 +145,13 @@ def edit_addon(entry_id, subject_id, addon_id):
             if addon:
                 if request.method == "POST":
                     data = form_to_dict(request.form)
+                    entry_id = addon.subject.entry.id
+                    subject_id = addon.subject.index
                     if data.get('delete') == 'on':
                         db.session.delete(addon)
                         db.session.commit()
                         flash("Addon deleted.")
-                        return redirect(url_for('dcii_entries_overview'))
+                        return redirect(url_for('edit_subject', entry_id = entry_id, subject_id = subject_id))
                     try:
                         for key, value in data.items():
                             if hasattr(addon, key):  # Check if the instance has the attribute
